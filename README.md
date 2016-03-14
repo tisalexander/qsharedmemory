@@ -1,0 +1,2 @@
+# qsharedmemory
+QSharedMemory testing
