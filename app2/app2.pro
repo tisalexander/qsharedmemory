@@ -6,3 +6,8 @@ SOURCES += main.cpp \
 HEADERS += maindialog.h
 
 FORMS += maindialog.ui
+
+#shared memory log
+SOURCES += ../sharedmemorylog/sharedmemorylog.cpp
+
+HEADERS += ../sharedmemorylog/sharedmemorylog.h

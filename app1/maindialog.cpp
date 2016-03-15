@@ -5,18 +5,20 @@
 
 MainDialog::MainDialog(QWidget *parent) :
 	QDialog(parent),
-	ui(new Ui::MainDialog)
+	ui(new Ui::MainDialog),
+	m_log(10, "qsharedmemory")
 {
 	ui->setupUi(this);
 
-	m_memory.setKey("qsharedmemory");
-	m_memory.create(1000000, QSharedMemory::ReadWrite);
+	if (!m_log.start()) {
+		qDebug() << "Shared Memory Log is not started !";
+	}
 
 	connect(ui->pushButton, SIGNAL(clicked(bool)),
 			qApp, SLOT(quit()));
 
-	connect(ui->pushButton_2, SIGNAL(clicked(bool)),
-			SLOT(saveToSharedMemory()));
+	connect(ui->pushButtonAppend, SIGNAL(clicked(bool)),
+			SLOT(appendToSharedMemory()));
 }
 
 MainDialog::~MainDialog()
@@ -24,26 +26,7 @@ MainDialog::~MainDialog()
 	delete ui;
 }
 
-void MainDialog::saveToSharedMemory()
+void MainDialog::appendToSharedMemory()
 {
-	QBuffer buffer;
-	if (!buffer.open(QIODevice::ReadWrite)) {
-		qDebug() << "Buffer is not opened.";
-	}
-
-	QTextStream out(&buffer);
-	out << ui->textEdit->toPlainText();
-	out.flush();
-
-	const int size = buffer.size();
-
-	if (!m_memory.lock()) {
-		qDebug() << "Can't lock shared memory.";
-	}
-
-	memcpy((char *)m_memory.data(), (const char *)buffer.buffer().data(), qMin(size, m_memory.size()));
-
-	if (!m_memory.unlock()) {
-		qDebug() << "Can't unlock shared memory.";
-	}
+	m_log.append(ui->textEdit->toPlainText());
 }

@@ -1,6 +1,7 @@
 #ifndef MAINDIALOG_H
 #define MAINDIALOG_H
 
+#include "../sharedmemorylog/sharedmemorylog.h"
 #include <QtCore/QSharedMemory>
 #include <QtGui/QDialog>
 
@@ -21,7 +22,7 @@ private slots:
 
 private:
 	Ui::MainDialog *ui;
-	QSharedMemory m_memory;
+	SharedMemoryLog m_log;
 };
 
 #endif // MAINDIALOG_H

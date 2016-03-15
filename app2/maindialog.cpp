@@ -9,11 +9,7 @@ MainDialog::MainDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	m_memory.setKey("qsharedmemory");
-
-	if (!m_memory.attach(QSharedMemory::ReadOnly)) {
-		qDebug() << "Reader. Can not attach shared memory.";
-	}
+	m_log.setKey("qsharedmemory");
 
 	connect(ui->pushButton, SIGNAL(clicked(bool)),
 			qApp, SLOT(quit()));
@@ -29,25 +25,5 @@ MainDialog::~MainDialog()
 
 void MainDialog::readFromSharedMemory()
 {
-	QBuffer buffer;
-	const int size = m_memory.size();
-
-	if (!m_memory.lock()) {
-		qDebug() << "Can't lock shared memory.";
-		return;
-	}
-
-	buffer.setData((const char *)m_memory.constData(), size);
-	if (!buffer.open(QIODevice::ReadWrite)) {
-		qDebug() << "Buffer is not opened.";
-		return;
-	}
-
-	if (!m_memory.unlock()) {
-		qDebug() << "Can't unlock shared memory.";
-		return;
-	}
-
-	QString text = QString::fromAscii(buffer.buffer().data());
-	ui->plainTextEdit->setPlainText(text);
+	ui->plainTextEdit->setPlainText(m_log.content());
 }
